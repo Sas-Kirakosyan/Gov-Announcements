@@ -77,6 +77,15 @@ loaded — and never needs to refetch. All storage access is wrapped in
 `try/catch` so disabled or corrupt storage degrades gracefully instead of
 crashing.
 
+**One `useFetch` hook for all requests.** The two fetch sites — the
+announcements list and the single-post detail fallback — share one custom hook
+(`hooks/useFetch.ts`) that owns the abort controller, `loading/success/error`
+status, and a `reload()` for retries. This isn't a data-fetching library (still
+plain `fetch` under the hood); it just removes duplicated boilerplate. Aborts
+are detected via `signal.aborted`, which ignores both a late success and the
+AbortError throw, and the hook can be disabled so the detail page skips the
+request entirely when the announcement is already cached.
+
 **Pure logic isolated for testing.** Data mapping (`lib/mapping.ts`) and
 filtering (`lib/filtering.ts`) are pure functions, kept separate from React so
 they're trivial to unit-test and reuse.
@@ -100,6 +109,7 @@ custom properties (colours, radius, spacing). Responsive and respects
 ```
 src/
   lib/         pure helpers: mapping, filtering, api (fetch), storage
+  hooks/       useFetch — shared abort/status/retry logic
   context/     AnnouncementsContext, BookmarksContext
   components/  NavBar, AnnouncementCard, badges, BookmarkButton, search/filter, states
   pages/       FeedPage, DetailPage, BookmarksPage

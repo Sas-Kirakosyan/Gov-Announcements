@@ -2,19 +2,15 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
-  useState,
   type ReactNode,
 } from 'react';
 import type { Announcement } from '@/types';
 import { fetchAnnouncements } from '@/lib/api';
-
-type Status = 'loading' | 'success' | 'error';
+import { useFetch, type FetchStatus } from '@/hooks/useFetch';
 
 interface AnnouncementsContextValue {
-  status: Status;
+  status: FetchStatus;
   announcements: Announcement[];
   error: string | null;
   /** Re-run the initial fetch (used by the error-state Retry button). */
@@ -27,15 +23,17 @@ const AnnouncementsContext = createContext<AnnouncementsContextValue | null>(
   null,
 );
 
+// Stable reference so the `byId` / `value` memos don't churn while loading.
+const EMPTY_ANNOUNCEMENTS: Announcement[] = [];
+
 /**
  * Fetches the full announcement list once and shares it across the app. The
  * Feed, Detail, and Bookmarks pages all read from this single in-memory cache
  * so navigating between them never triggers a second list request.
  */
 export function AnnouncementsProvider({ children }: { children: ReactNode }) {
-  const [status, setStatus] = useState<Status>('loading');
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const { data, status, error, reload } = useFetch(fetchAnnouncements, []);
+  const announcements = data ?? EMPTY_ANNOUNCEMENTS;
 
   // Index by id for O(1) detail lookups, recomputed only when data changes.
   const byId = useMemo(() => {
@@ -44,44 +42,17 @@ export function AnnouncementsProvider({ children }: { children: ReactNode }) {
     return map;
   }, [announcements]);
 
-  const abortRef = useRef<AbortController | null>(null);
-
-  const load = useCallback(async () => {
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    setStatus('loading');
-    setError(null);
-    try {
-      const data = await fetchAnnouncements(controller.signal);
-      if (controller.signal.aborted) return;
-      setAnnouncements(data);
-      setStatus('success');
-    } catch (err) {
-      if (controller.signal.aborted) return;
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Something went wrong while loading announcements.',
-      );
-      setStatus('error');
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-    return () => abortRef.current?.abort();
-  }, [load]);
-
-  const getById = useCallback(
-    (id: number) => byId.get(id),
-    [byId],
-  );
+  const getById = useCallback((id: number) => byId.get(id), [byId]);
 
   const value = useMemo<AnnouncementsContextValue>(
-    () => ({ status, announcements, error, retry: load, getById }),
-    [status, announcements, error, load, getById],
+    () => ({
+      status,
+      announcements,
+      error: error?.message ?? null,
+      retry: reload,
+      getById,
+    }),
+    [status, announcements, error, reload, getById],
   );
 
   return (
