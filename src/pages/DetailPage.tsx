@@ -3,13 +3,12 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAnnouncements } from '@/context/AnnouncementsContext';
 import { fetchAnnouncement, NotFoundError } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
-import { CategoryBadge } from '@/components/CategoryBadge';
-import { UrgentBadge } from '@/components/UrgentBadge';
+import { BadgeGroup } from '@/components/BadgeGroup';
 import { BookmarkButton } from '@/components/BookmarkButton';
+import { Button } from '@/components/Button';
 import { Loading } from '@/components/Loading';
 import { ErrorState } from '@/components/ErrorState';
 import { EmptyState } from '@/components/EmptyState';
-import common from '@/styles/common.module.css';
 import styles from './DetailPage.module.css';
 
 /**
@@ -61,13 +60,13 @@ export default function DetailPage() {
 
   return (
     <section>
-      <button
-        type="button"
-        className={`${common.button} ${common.buttonGhost} ${styles.backButton}`}
+      <Button
+        variant="ghost"
+        className={styles.backButton}
         onClick={handleBack}
       >
         ← Back
-      </button>
+      </Button>
 
       {status === 'loading' && <Loading label="Loading announcement…" />}
 
@@ -80,13 +79,7 @@ export default function DetailPage() {
 
       {isNotFound && (
         <EmptyState title={`Announcement #${id} could not be found.`}>
-          <button
-            type="button"
-            className={common.button}
-            onClick={() => navigate('/announcements')}
-          >
-            Back to feed
-          </button>
+          <Button onClick={() => navigate('/announcements')}>Back to feed</Button>
         </EmptyState>
       )}
 
@@ -96,10 +89,7 @@ export default function DetailPage() {
             announcement.isUrgent ? ` ${styles.detailUrgent}` : ''
           }`}
         >
-          <div className={styles.badges}>
-            <CategoryBadge category={announcement.category} />
-            {announcement.isUrgent && <UrgentBadge />}
-          </div>
+          <BadgeGroup announcement={announcement} />
 
           <h1 className={styles.title}>{announcement.title}</h1>
 

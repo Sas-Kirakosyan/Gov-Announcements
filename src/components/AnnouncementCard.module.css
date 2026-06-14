@@ -22,13 +22,6 @@
   padding: 1rem 1.1rem 0.9rem;
 }
 
-.badges {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
 .title {
   font-size: 1.1rem;
   letter-spacing: -0.01em;

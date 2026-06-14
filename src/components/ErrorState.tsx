@@ -1,4 +1,5 @@
 import common from '@/styles/common.module.css';
+import { Button } from '@/components/Button';
 
 interface ErrorStateProps {
   message: string;
@@ -13,11 +14,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         ⚠️
       </p>
       <p className={common.stateMessage}>{message}</p>
-      {onRetry && (
-        <button type="button" className={common.button} onClick={onRetry}>
-          Retry
-        </button>
-      )}
+      {onRetry && <Button onClick={onRetry}>Retry</Button>}
     </div>
   );
 }

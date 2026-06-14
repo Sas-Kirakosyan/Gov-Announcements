@@ -5,6 +5,7 @@ import { useAnnouncements } from '@/context/AnnouncementsContext';
 import { filterAnnouncements } from '@/lib/filtering';
 import { paginate } from '@/lib/pagination';
 import { AnnouncementCard } from '@/components/AnnouncementCard';
+import { Button } from '@/components/Button';
 import { SearchBar } from '@/components/SearchBar';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { Pagination } from '@/components/Pagination';
@@ -149,13 +150,12 @@ export default function FeedPage() {
 
           {visible.length === 0 ? (
             <EmptyState title="No announcements match your search and filters.">
-              <button
-                type="button"
-                className={`${common.button} ${common.buttonGhost}`}
+              <Button
+                variant="ghost"
                 onClick={() => updateParams({ q: '', category: 'All' })}
               >
                 Clear filters
-              </button>
+              </Button>
             </EmptyState>
           ) : (
             <>

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Announcement } from '@/types';
-import { CategoryBadge } from '@/components/CategoryBadge';
-import { UrgentBadge } from '@/components/UrgentBadge';
+import { BadgeGroup } from '@/components/BadgeGroup';
 import { BookmarkButton } from '@/components/BookmarkButton';
 import styles from './AnnouncementCard.module.css';
 
@@ -22,10 +21,7 @@ export function AnnouncementCard({
         to={`/announcements/${announcement.id}${search}`}
         className={styles.link}
       >
-        <div className={styles.badges}>
-          <CategoryBadge category={announcement.category} />
-          {announcement.isUrgent && <UrgentBadge />}
-        </div>
+        <BadgeGroup announcement={announcement} />
         <h2 className={styles.title}>{announcement.title}</h2>
         <p className={styles.excerpt}>{announcement.body}</p>
       </Link>
