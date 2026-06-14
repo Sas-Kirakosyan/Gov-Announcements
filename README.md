@@ -24,6 +24,7 @@ Other scripts:
 ```bash
 npm run build      # type-check and produce a production build in dist/
 npm run preview    # serve the production build locally
+npm run lint       # static analysis with ESLint
 npm test           # run the unit + component test suite (Vitest)
 npm run test:watch # run tests in watch mode
 ```
@@ -105,6 +106,15 @@ to a valid page rather than a blank list.
 **Pure logic isolated for testing.** Data mapping (`lib/mapping.ts`),
 filtering (`lib/filtering.ts`), and pagination (`lib/pagination.ts`) are pure
 functions, kept separate from React so they're trivial to unit-test and reuse.
+
+**Static analysis with ESLint.** A flat config (`eslint.config.js`) runs the
+typescript-eslint recommended rules plus `eslint-plugin-react-hooks` — the
+latter catches missing/incorrect effect dependencies, the most common source of
+subtle React bugs. `no-unused-vars` is aligned to the TypeScript `^_` convention
+so intentionally-ignored arguments don't produce noise. `npm run lint` passes
+clean; the only warnings are `react-refresh/only-export-components` on the two
+context files, an accepted trade-off of co-locating each provider with its hook
+(it affects dev hot-reload only, never runtime).
 
 **CSS Modules, co-located per component.** Each component/page owns a
 `*.module.css` next to it (`AnnouncementCard.module.css`, etc.), so class names
