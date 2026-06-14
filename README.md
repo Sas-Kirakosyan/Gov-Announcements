@@ -40,6 +40,9 @@ npm run test:watch # run tests in watch mode
   colour-coded category badge, and an urgent indicator where applicable.
 - **Search + category filter** — real-time, client-side, no extra API calls.
   Both filters apply simultaneously and live in the URL query string.
+- **Pagination** — the (filtered) feed is paged at 12 per page; the page lives
+  in the URL (`?page=`), resets to 1 when the filters change, and clamps stale
+  out-of-range deep links.
 - **Detail (`/announcements/:id`)** — shows every field. Navigating from the
   feed reuses already-fetched data (no second request); opening the URL
   directly falls back to fetching that single post. Includes a **Back** button
@@ -86,9 +89,22 @@ are detected via `signal.aborted`, which ignores both a late success and the
 AbortError throw, and the hook can be disabled so the detail page skips the
 request entirely when the announcement is already cached.
 
-**Pure logic isolated for testing.** Data mapping (`lib/mapping.ts`) and
-filtering (`lib/filtering.ts`) are pure functions, kept separate from React so
-they're trivial to unit-test and reuse.
+**Client-side pagination, applied after filtering.** The feed already holds all
+announcements in memory (a hard requirement: "fetch all on load" plus search
+with "no additional API call"), so paging is a purely presentational last step
+— filter first, then slice the filtered result, so the result count and the
+visible page never disagree. Server-side paging was considered and rejected: it
+would mean fetching everything anyway *and* adding extra round-trips, while
+search/category would still have to run client-side to honour the no-extra-call
+rule. (JSONPlaceholder does support `?_page=&_limit=`, but using it here would
+contradict those requirements.) The page number lives in the URL alongside the
+filters, so it shares their benefits — shareable links and a working Back
+button — and `paginate` clamps out-of-range pages so stale deep links degrade
+to a valid page rather than a blank list.
+
+**Pure logic isolated for testing.** Data mapping (`lib/mapping.ts`),
+filtering (`lib/filtering.ts`), and pagination (`lib/pagination.ts`) are pure
+functions, kept separate from React so they're trivial to unit-test and reuse.
 
 **CSS Modules, co-located per component.** Each component/page owns a
 `*.module.css` next to it (`AnnouncementCard.module.css`, etc.), so class names
@@ -137,8 +153,12 @@ Run with `npm test`. Coverage focuses on the parts most worth protecting:
   case-insensitivity, and no-match.
 - `BookmarksContext.test.tsx` — toggle, `localStorage` persistence, rehydration,
   and graceful recovery from corrupt storage.
+- `pagination.test.ts` — slicing, partial final page, clamping above/below
+  range, non-integer pages, the empty list, and the page-range/ellipsis logic.
 - `FeedPage.test.tsx` — loading → loaded flow, search + category filtering
-  working together (mocked `fetch`), and the error + Retry state.
+  working together (mocked `fetch`), the error + Retry state, the 12-per-page
+  limit with pager navigation, clamping an out-of-range deep link, and resetting
+  to page 1 when the search changes.
 
 ---
 
@@ -149,8 +169,10 @@ Run with `npm test`. Coverage focuses on the parts most worth protecting:
   warranted for a feed of this size.
 - **Mock API.** JSONPlaceholder is read-only sample data, so bookmarking is the
   only state that "sticks" (in `localStorage`). Titles/bodies are lorem ipsum.
-- **No pagination/virtualization.** All ~100 posts render at once, which is fine
-  at this scale; a much larger feed would want windowing.
+- **Pagination, not virtualization.** The feed is paged (12/page) for a bounded
+  scroll. At ~100 items the DOM cost of rendering a page is trivial, so no
+  windowing/virtualization is used; a much larger feed (or very long pages)
+  would want that instead.
 - **Category/urgent overlap by design.** Because both are derived from `id`,
   e.g. `id` 28 is both `Health` (28 % 4 = 0) and `Urgent` (28 % 7 = 0). This
   follows the spec literally. (`id 0` isn't returned by the API, so the
