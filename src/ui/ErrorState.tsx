@@ -1,5 +1,5 @@
 import common from '@/styles/common.module.css';
-import { Button } from '@/components/Button';
+import { Button } from '@/ui/Button';
 
 interface ErrorStateProps {
   message: string;

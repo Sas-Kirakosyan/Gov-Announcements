@@ -5,10 +5,10 @@ import { fetchAnnouncement, NotFoundError } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
 import { BadgeGroup } from '@/components/BadgeGroup';
 import { BookmarkButton } from '@/components/BookmarkButton';
-import { Button } from '@/components/Button';
-import { Loading } from '@/components/Loading';
-import { ErrorState } from '@/components/ErrorState';
-import { EmptyState } from '@/components/EmptyState';
+import { Button } from '@/ui/Button';
+import { Loading } from '@/ui/Loading';
+import { ErrorState } from '@/ui/ErrorState';
+import { EmptyState } from '@/ui/EmptyState';
 import styles from './DetailPage.module.css';
 
 /**

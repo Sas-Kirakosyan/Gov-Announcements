@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { NavBar } from '@/components/NavBar';
-import { EmptyState } from '@/components/EmptyState';
-import { Loading } from '@/components/Loading';
+import { EmptyState } from '@/ui/EmptyState';
+import { Loading } from '@/ui/Loading';
 import common from '@/styles/common.module.css';
 import styles from './App.module.css';
 

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useBookmarks } from '@/context/BookmarksContext';
 import { AnnouncementCard } from '@/components/AnnouncementCard';
-import { EmptyState } from '@/components/EmptyState';
+import { EmptyState } from '@/ui/EmptyState';
 import common from '@/styles/common.module.css';
 
 /**
