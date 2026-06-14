@@ -1,3 +1,5 @@
+import common from '@/styles/common.module.css';
+
 interface ErrorStateProps {
   message: string;
   onRetry?: () => void;
@@ -6,13 +8,13 @@ interface ErrorStateProps {
 /** Error state with an optional Retry action. */
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
-    <div className="state state--error" role="alert">
-      <p className="state__icon" aria-hidden="true">
+    <div className={common.state} role="alert">
+      <p className={common.stateIcon} aria-hidden="true">
         ⚠️
       </p>
-      <p className="state__message">{message}</p>
+      <p className={common.stateMessage}>{message}</p>
       {onRetry && (
-        <button type="button" className="button" onClick={onRetry}>
+        <button type="button" className={common.button} onClick={onRetry}>
           Retry
         </button>
       )}

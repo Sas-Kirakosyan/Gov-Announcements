@@ -9,6 +9,8 @@ import { CategoryFilter } from '@/components/CategoryFilter';
 import { Loading } from '@/components/Loading';
 import { ErrorState } from '@/components/ErrorState';
 import { EmptyState } from '@/components/EmptyState';
+import common from '@/styles/common.module.css';
+import styles from './FeedPage.module.css';
 
 const VALID_CATEGORIES: CategoryFilterValue[] = [
   'All',
@@ -64,19 +66,16 @@ export default function FeedPage() {
   const linkSearch = search ? `?${search}` : '';
 
   return (
-    <section className="page">
-      <div className="page__header">
+    <section>
+      <div className={common.pageHeader}>
         <h1>Announcements</h1>
-        <p className="page__subtitle">
+        <p className={common.pageSubtitle}>
           Official updates from your local government.
         </p>
       </div>
 
-      <div className="feed-controls">
-        <SearchBar
-          value={query}
-          onChange={(q) => updateParams({ q })}
-        />
+      <div className={styles.controls}>
+        <SearchBar value={query} onChange={(q) => updateParams({ q })} />
         <CategoryFilter
           value={category}
           onChange={(c) => updateParams({ category: c })}
@@ -94,7 +93,7 @@ export default function FeedPage() {
 
       {status === 'success' && (
         <>
-          <p className="feed-meta" aria-live="polite">
+          <p className={styles.meta} aria-live="polite">
             {visible.length}{' '}
             {visible.length === 1 ? 'announcement' : 'announcements'}
             {(query || category !== 'All') && ' match your filters'}
@@ -104,14 +103,14 @@ export default function FeedPage() {
             <EmptyState title="No announcements match your search and filters.">
               <button
                 type="button"
-                className="button button--ghost"
+                className={`${common.button} ${common.buttonGhost}`}
                 onClick={() => updateParams({ q: '', category: 'All' })}
               >
                 Clear filters
               </button>
             </EmptyState>
           ) : (
-            <ul className="card-list">
+            <ul className={common.cardList}>
               {visible.map((a) => (
                 <AnnouncementCard
                   key={a.id}

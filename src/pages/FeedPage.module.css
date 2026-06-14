@@ -1,0 +1,18 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .controls {
+    gap: 1rem;
+  }
+}

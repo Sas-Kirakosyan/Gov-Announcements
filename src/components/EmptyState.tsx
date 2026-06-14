@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import common from '@/styles/common.module.css';
 
 interface EmptyStateProps {
   title: string;
@@ -8,11 +9,11 @@ interface EmptyStateProps {
 /** Friendly placeholder shown when a list has no items to display. */
 export function EmptyState({ title, children }: EmptyStateProps) {
   return (
-    <div className="state state--empty">
-      <p className="state__icon" aria-hidden="true">
+    <div className={common.state}>
+      <p className={common.stateIcon} aria-hidden="true">
         📭
       </p>
-      <p className="state__message">{title}</p>
+      <p className={common.stateMessage}>{title}</p>
       {children}
     </div>
   );

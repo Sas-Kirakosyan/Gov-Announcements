@@ -1,0 +1,72 @@
+/*
+ * Global foundation only: design tokens, reset, and base element styling.
+ * Everything component-specific lives in co-located *.module.css files; styles
+ * shared across components live in styles/common.module.css.
+ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --color-bg: #f4f6fa;
+  --color-surface: #ffffff;
+  --color-border: #e1e5ec;
+  --color-text: #1c2330;
+  --color-text-muted: #5a6473;
+  --color-primary: #1a4d8f;
+  --color-primary-dark: #143a6b;
+  --color-primary-soft: #e8f0fb;
+  --color-urgent: #c2371f;
+  --color-urgent-soft: #fdece8;
+
+  --cat-health: #1f8a5b;
+  --cat-transport: #2563a8;
+  --cat-education: #8a5a1f;
+  --cat-infrastructure: #6b4fa0;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(20, 35, 60, 0.08), 0 4px 12px rgba(20, 35, 60, 0.05);
+  --maxw: 880px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+/* ---------- Reset / base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

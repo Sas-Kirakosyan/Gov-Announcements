@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from '@/App';
 import { AnnouncementsProvider } from '@/context/AnnouncementsContext';
 import { BookmarksProvider } from '@/context/BookmarksContext';
-import '@/styles/index.css';
+import '@/styles/global.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

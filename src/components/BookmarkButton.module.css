@@ -1,0 +1,40 @@
+.bookmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.icon {
+  padding: 0.3rem 0.45rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.full {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.bookmark:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Combined selector so the active style still wins while hovering. */
+.bookmark.active {
+  border-color: #e0a020;
+  color: #d99000;
+  background: #fff8e8;
+}
+
+.glyph {
+  font-size: 1.1rem;
+  line-height: 1;
+}

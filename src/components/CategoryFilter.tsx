@@ -1,4 +1,5 @@
 import type { CategoryFilter as CategoryFilterValue } from '@/types';
+import styles from './CategoryFilter.module.css';
 
 const OPTIONS: CategoryFilterValue[] = [
   'All',
@@ -16,18 +17,16 @@ interface CategoryFilterProps {
 /** Segmented control for filtering the feed by category. */
 export function CategoryFilter({ value, onChange }: CategoryFilterProps) {
   return (
-    <div
-      className="category-filter"
-      role="group"
-      aria-label="Filter by category"
-    >
+    <div className={styles.filter} role="group" aria-label="Filter by category">
       {OPTIONS.map((option) => (
         <button
           key={option}
           type="button"
-          className={`category-filter__option${
-            value === option ? ' is-active' : ''
-          }`}
+          className={
+            value === option
+              ? `${styles.option} ${styles.optionActive}`
+              : styles.option
+          }
           aria-pressed={value === option}
           onClick={() => onChange(option)}
         >

@@ -90,9 +90,18 @@ request entirely when the announcement is already cached.
 filtering (`lib/filtering.ts`) are pure functions, kept separate from React so
 they're trivial to unit-test and reuse.
 
-**Plain CSS with design tokens.** A single stylesheet drives the look via CSS
-custom properties (colours, radius, spacing). Responsive and respects
-`prefers-reduced-motion`.
+**CSS Modules, co-located per component.** Each component/page owns a
+`*.module.css` next to it (`AnnouncementCard.module.css`, etc.), so class names
+are build-time scoped — no global collisions and no BEM naming discipline. A
+single `styles/global.css` holds only the foundation (design tokens as CSS
+custom properties, reset, base element styling, `prefers-reduced-motion`), and
+`styles/common.module.css` holds the few genuinely cross-cutting primitives
+(buttons, page header, card list, async-state blocks). This is still "plain CSS"
+— Modules are just scoping at build time, no preprocessor/`sass` dependency — and
+because the pages are lazy-loaded, each route's module CSS is bundled into that
+route's chunk automatically. At this app's size the chunking is a negligible
+performance win; the choice is for scope safety and convention, and to stay
+consistent with the lazy-loaded routing.
 
 ### Data mapping
 
@@ -111,9 +120,9 @@ src/
   lib/         pure helpers: mapping, filtering, api (fetch), storage
   hooks/       useFetch — shared abort/status/retry logic
   context/     AnnouncementsContext, BookmarksContext
-  components/  NavBar, AnnouncementCard, badges, BookmarkButton, search/filter, states
-  pages/       FeedPage, DetailPage, BookmarksPage
-  styles/      index.css (design tokens + all component styles)
+  components/  NavBar, AnnouncementCard, badges, … (each with a co-located *.module.css)
+  pages/       FeedPage, DetailPage, BookmarksPage (each with a co-located *.module.css)
+  styles/      global.css (tokens/reset/base) + common.module.css (shared primitives)
   test/        Vitest unit + component tests
 ```
 

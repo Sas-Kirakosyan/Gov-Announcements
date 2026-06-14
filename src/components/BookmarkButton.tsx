@@ -1,5 +1,6 @@
 import type { Announcement } from '@/types';
 import { useBookmarks } from '@/context/BookmarksContext';
+import styles from './BookmarkButton.module.css';
 
 interface BookmarkButtonProps {
   announcement: Announcement;
@@ -16,13 +17,18 @@ export function BookmarkButton({
   const bookmarked = isBookmarked(announcement.id);
 
   const label = bookmarked ? 'Remove bookmark' : 'Add bookmark';
+  const className = [
+    styles.bookmark,
+    styles[variant],
+    bookmarked ? styles.active : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <button
       type="button"
-      className={`bookmark-button bookmark-button--${variant}${
-        bookmarked ? ' is-active' : ''
-      }`}
+      className={className}
       aria-pressed={bookmarked}
       aria-label={label}
       title={label}
@@ -33,7 +39,7 @@ export function BookmarkButton({
         toggle(announcement);
       }}
     >
-      <span className="bookmark-button__icon" aria-hidden="true">
+      <span className={styles.glyph} aria-hidden="true">
         {bookmarked ? '★' : '☆'}
       </span>
       {variant === 'full' && (

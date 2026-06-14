@@ -1,11 +1,10 @@
 import type { Category } from '@/types';
+import styles from './CategoryBadge.module.css';
 
 /** Small colour-coded pill showing an announcement's category. */
 export function CategoryBadge({ category }: { category: Category }) {
   return (
-    <span
-      className={`category-badge category-badge--${category.toLowerCase()}`}
-    >
+    <span className={`${styles.badge} ${styles[category.toLowerCase()]}`}>
       {category}
     </span>
   );

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useBookmarks } from '@/context/BookmarksContext';
 import { AnnouncementCard } from '@/components/AnnouncementCard';
 import { EmptyState } from '@/components/EmptyState';
+import common from '@/styles/common.module.css';
 
 /**
  * Shows only bookmarked announcements. Reads full objects straight from the
@@ -11,10 +12,10 @@ export default function BookmarksPage() {
   const { bookmarks, count } = useBookmarks();
 
   return (
-    <section className="page">
-      <div className="page__header">
+    <section>
+      <div className={common.pageHeader}>
         <h1>Bookmarks</h1>
-        <p className="page__subtitle">
+        <p className={common.pageSubtitle}>
           {count === 0
             ? 'Announcements you save will appear here.'
             : `${count} saved ${count === 1 ? 'announcement' : 'announcements'}.`}
@@ -23,12 +24,12 @@ export default function BookmarksPage() {
 
       {bookmarks.length === 0 ? (
         <EmptyState title="You haven't bookmarked anything yet.">
-          <Link to="/announcements" className="button">
+          <Link to="/announcements" className={common.button}>
             Browse announcements
           </Link>
         </EmptyState>
       ) : (
-        <ul className="card-list">
+        <ul className={common.cardList}>
           {bookmarks.map((a) => (
             <AnnouncementCard key={a.id} announcement={a} />
           ))}
