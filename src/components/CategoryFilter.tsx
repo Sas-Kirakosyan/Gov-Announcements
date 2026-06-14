@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { CategoryFilter as CategoryFilterValue } from '@/types';
 import styles from './CategoryFilter.module.css';
 
@@ -14,8 +15,14 @@ interface CategoryFilterProps {
   onChange: (value: CategoryFilterValue) => void;
 }
 
-/** Segmented control for filtering the feed by category. */
-export function CategoryFilter({ value, onChange }: CategoryFilterProps) {
+/**
+ * Segmented control for filtering the feed by category. Memoized so toggling a
+ * bookmark or typing in search doesn't needlessly re-render the button group.
+ */
+export const CategoryFilter = memo(function CategoryFilter({
+  value,
+  onChange,
+}: CategoryFilterProps) {
   return (
     <div className={styles.filter} role="group" aria-label="Filter by category">
       {OPTIONS.map((option) => (
@@ -35,4 +42,4 @@ export function CategoryFilter({ value, onChange }: CategoryFilterProps) {
       ))}
     </div>
   );
-}
+});

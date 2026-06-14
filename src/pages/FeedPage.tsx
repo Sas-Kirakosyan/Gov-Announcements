@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { CategoryFilter as CategoryFilterValue } from '@/types';
 import { useAnnouncements } from '@/context/AnnouncementsContext';
@@ -46,36 +46,55 @@ export default function FeedPage() {
   const rawPage = searchParams.get('page');
   const requestedPage = Number(rawPage) || 1;
 
-  const updateParams = (next: {
-    q?: string;
-    category?: CategoryFilterValue;
-    page?: number;
-  }) => {
-    setSearchParams(
-      (prev) => {
-        const params = new URLSearchParams(prev);
-        // Changing the search or category resets paging back to the first page,
-        // otherwise a narrower result set could leave you stranded on a page
-        // that no longer exists.
-        if (next.q !== undefined) {
-          if (next.q) params.set('q', next.q);
-          else params.delete('q');
-          params.delete('page');
-        }
-        if (next.category !== undefined) {
-          if (next.category !== 'All') params.set('category', next.category);
-          else params.delete('category');
-          params.delete('page');
-        }
-        if (next.page !== undefined) {
-          if (next.page > 1) params.set('page', String(next.page));
-          else params.delete('page');
-        }
-        return params;
-      },
-      { replace: true },
-    );
-  };
+  // react-router recreates `setSearchParams` whenever the URL's query string
+  // changes (its identity depends on the current params), so closing over it
+  // directly would give `updateParams` a new identity on every keystroke and
+  // bust the memo on SearchBar/CategoryFilter. Read the latest one from a ref
+  // instead, keeping `updateParams` — and the handlers derived from it — stable
+  // for the lifetime of the page.
+  const setSearchParamsRef = useRef(setSearchParams);
+  useEffect(() => {
+    setSearchParamsRef.current = setSearchParams;
+  });
+
+  const updateParams = useCallback(
+    (next: { q?: string; category?: CategoryFilterValue; page?: number }) => {
+      setSearchParamsRef.current(
+        (prev) => {
+          const params = new URLSearchParams(prev);
+          // Changing the search or category resets paging back to the first page,
+          // otherwise a narrower result set could leave you stranded on a page
+          // that no longer exists.
+          if (next.q !== undefined) {
+            if (next.q) params.set('q', next.q);
+            else params.delete('q');
+            params.delete('page');
+          }
+          if (next.category !== undefined) {
+            if (next.category !== 'All') params.set('category', next.category);
+            else params.delete('category');
+            params.delete('page');
+          }
+          if (next.page !== undefined) {
+            if (next.page > 1) params.set('page', String(next.page));
+            else params.delete('page');
+          }
+          return params;
+        },
+        { replace: true },
+      );
+    },
+    [],
+  );
+
+  const handleSearch = useCallback(
+    (q: string) => updateParams({ q }),
+    [updateParams],
+  );
+  const handleCategory = useCallback(
+    (c: CategoryFilterValue) => updateParams({ category: c }),
+    [updateParams],
+  );
 
   const visible = useMemo(
     () => filterAnnouncements(announcements, query, category),
@@ -124,11 +143,8 @@ export default function FeedPage() {
       </div>
 
       <div className={styles.controls}>
-        <SearchBar value={query} onChange={(q) => updateParams({ q })} />
-        <CategoryFilter
-          value={category}
-          onChange={(c) => updateParams({ category: c })}
-        />
+        <SearchBar value={query} onChange={handleSearch} />
+        <CategoryFilter value={category} onChange={handleCategory} />
       </div>
 
       {status === 'loading' && <Loading label="Loading announcements…" />}

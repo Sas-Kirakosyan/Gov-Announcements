@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
@@ -5,8 +6,14 @@ interface SearchBarProps {
   onChange: (value: string) => void;
 }
 
-/** Controlled, real-time title search input. */
-export function SearchBar({ value, onChange }: SearchBarProps) {
+/**
+ * Controlled, real-time title search input. Memoized so it only re-renders when
+ * its own value changes, not on every parent render (e.g. a category change).
+ */
+export const SearchBar = memo(function SearchBar({
+  value,
+  onChange,
+}: SearchBarProps) {
   return (
     <div>
       <label htmlFor="search" className={styles.label}>
@@ -25,4 +32,4 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
       </div>
     </div>
   );
-}
+});
