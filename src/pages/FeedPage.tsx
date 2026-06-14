@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { CategoryFilter as CategoryFilterValue } from '@/types';
 import { useAnnouncements } from '@/context/AnnouncementsContext';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { filterAnnouncements } from '@/lib/filtering';
 import { paginate } from '@/lib/pagination';
 import { AnnouncementCard } from '@/components/AnnouncementCard';
@@ -101,6 +102,13 @@ export default function FeedPage() {
     [announcements, query, category],
   );
 
+  // The visible count updates on every keystroke, but the polite live region
+  // that voices it is debounced so rapid typing doesn't spam assistive tech.
+  const resultLabel = `${visible.length} ${
+    visible.length === 1 ? 'announcement' : 'announcements'
+  }${query || category !== 'All' ? ' match your filters' : ''}`;
+  const announcedLabel = useDebouncedValue(resultLabel, 500);
+
   // Paginate the already-filtered list. `paginate` clamps an out-of-range page
   // (e.g. a stale deep link), so `pageData.page` is the authoritative value.
   const pageData = useMemo(
@@ -158,10 +166,11 @@ export default function FeedPage() {
 
       {status === 'success' && (
         <>
-          <p className={styles.meta} aria-live="polite">
-            {visible.length}{' '}
-            {visible.length === 1 ? 'announcement' : 'announcements'}
-            {(query || category !== 'All') && ' match your filters'}
+          <p className={styles.meta}>{resultLabel}</p>
+          {/* Debounced, visually hidden mirror so screen readers hear the
+              settled result count rather than one update per keystroke. */}
+          <p className={common.srOnly} aria-live="polite" aria-atomic="true">
+            {announcedLabel}
           </p>
 
           {visible.length === 0 ? (

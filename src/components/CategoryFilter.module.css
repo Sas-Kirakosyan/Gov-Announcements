@@ -27,3 +27,11 @@
   border-color: var(--color-primary);
   color: #fff;
 }
+
+/* Narrow phones: shrink the pills so all five wrap neatly without crowding. */
+@media (max-width: 480px) {
+  .option {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.83rem;
+  }
+}

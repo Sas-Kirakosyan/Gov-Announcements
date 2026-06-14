@@ -21,7 +21,7 @@ export function NavBar() {
       <div className={styles.inner}>
         <NavLink to="/announcements" className={styles.brand}>
           <span aria-hidden="true">🏛️</span>
-          Gov Announcements
+          <span className={styles.brandText}>Gov Announcements</span>
         </NavLink>
 
         <nav className={styles.links} aria-label="Primary">

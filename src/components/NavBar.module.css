@@ -24,12 +24,25 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  /* Allow the brand to shrink (and truncate) so the nav links always fit. */
+  min-width: 0;
+}
+
+.brandText {
+  /* min-width:0 overrides the flex item's default min-width:auto so it can
+     shrink below its content and the ellipsis can engage. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .links {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  /* Keep Feed / Bookmarks at full size; the brand yields space instead. */
+  flex-shrink: 0;
 }
 
 .link {
@@ -66,4 +79,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Narrow phones (~360px): tighten spacing and the brand so nothing overflows. */
+@media (max-width: 480px) {
+  .inner {
+    padding: 0 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .link {
+    padding: 0.45rem 0.6rem;
+  }
 }
