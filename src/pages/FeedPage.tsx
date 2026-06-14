@@ -29,7 +29,7 @@ function parseCategory(raw: string | null): CategoryFilterValue {
  * makes them the single source of truth: filters survive navigation to the
  * detail page and back, and are shareable/bookmarkable links.
  */
-export function FeedPage() {
+export default function FeedPage() {
   const { status, announcements, error, retry } = useAnnouncements();
   const [searchParams, setSearchParams] = useSearchParams();
 

@@ -7,7 +7,7 @@ import { EmptyState } from '@/components/EmptyState';
  * Shows only bookmarked announcements. Reads full objects straight from the
  * bookmarks store, so it works even on a cold load before the feed has fetched.
  */
-export function BookmarksPage() {
+export default function BookmarksPage() {
   const { bookmarks, count } = useBookmarks();
 
   return (

@@ -1,14 +1,14 @@
-import { useCallback } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useAnnouncements } from '@/context/AnnouncementsContext';
-import { fetchAnnouncement, NotFoundError } from '@/lib/api';
-import { useFetch } from '@/hooks/useFetch';
-import { CategoryBadge } from '@/components/CategoryBadge';
-import { UrgentBadge } from '@/components/UrgentBadge';
-import { BookmarkButton } from '@/components/BookmarkButton';
-import { Loading } from '@/components/Loading';
-import { ErrorState } from '@/components/ErrorState';
-import { EmptyState } from '@/components/EmptyState';
+import { useCallback } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useAnnouncements } from "@/context/AnnouncementsContext";
+import { fetchAnnouncement, NotFoundError } from "@/lib/api";
+import { useFetch } from "@/hooks/useFetch";
+import { CategoryBadge } from "@/components/CategoryBadge";
+import { UrgentBadge } from "@/components/UrgentBadge";
+import { BookmarkButton } from "@/components/BookmarkButton";
+import { Loading } from "@/components/Loading";
+import { ErrorState } from "@/components/ErrorState";
+import { EmptyState } from "@/components/EmptyState";
 
 /**
  * Detail view for a single announcement.
@@ -18,7 +18,7 @@ import { EmptyState } from '@/components/EmptyState';
  * - On a direct deep link (cache miss), it falls back to fetching that one
  *   post via `useFetch`, with its own loading / error / not-found states.
  */
-export function DetailPage() {
+export default function DetailPage() {
   const { id } = useParams<{ id: string }>();
   const numericId = Number(id);
   const validId = Number.isInteger(numericId) && numericId > 0;
@@ -43,18 +43,17 @@ export function DetailPage() {
   const announcement = cached ?? fetched ?? null;
   const isNotFound =
     !announcement &&
-    ((!validId && status === 'idle') || error instanceof NotFoundError);
-  const isError =
-    status === 'error' && !(error instanceof NotFoundError);
+    ((!validId && status === "idle") || error instanceof NotFoundError);
+  const isError = status === "error" && !(error instanceof NotFoundError);
 
   const handleBack = () => {
     // If the user arrived from within the app, go back so the feed's search
     // and filter state is restored exactly. Otherwise (deep link) send them
     // to the feed.
-    if (location.key !== 'default') {
+    if (location.key !== "default") {
       navigate(-1);
     } else {
-      navigate('/announcements');
+      navigate("/announcements");
     }
   };
 
@@ -68,11 +67,11 @@ export function DetailPage() {
         ← Back
       </button>
 
-      {status === 'loading' && <Loading label="Loading announcement…" />}
+      {status === "loading" && <Loading label="Loading announcement…" />}
 
       {isError && (
         <ErrorState
-          message={error?.message ?? 'Failed to load this announcement.'}
+          message={error?.message ?? "Failed to load this announcement."}
           onRetry={reload}
         />
       )}
@@ -82,16 +81,16 @@ export function DetailPage() {
           <button
             type="button"
             className="button"
-            onClick={() => navigate('/announcements')}
+            onClick={() => navigate("/announcements")}
           >
             Back to feed
           </button>
         </EmptyState>
       )}
 
-      {announcement && status !== 'loading' && (
+      {announcement && status !== "loading" && (
         <article
-          className={`detail${announcement.isUrgent ? ' detail--urgent' : ''}`}
+          className={`detail${announcement.isUrgent ? " detail--urgent" : ""}`}
         >
           <div className="detail__badges">
             <CategoryBadge category={announcement.category} />

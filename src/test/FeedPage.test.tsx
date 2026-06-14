@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { AnnouncementsProvider } from '@/context/AnnouncementsContext';
 import { BookmarksProvider } from '@/context/BookmarksContext';
-import { FeedPage } from '@/pages/FeedPage';
+import FeedPage from '@/pages/FeedPage';
 import type { Post } from '@/types';
 
 // Raw posts chosen so categories are predictable:
