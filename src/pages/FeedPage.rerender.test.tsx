@@ -52,7 +52,10 @@ describe('FeedPage filter control re-renders', () => {
     const { default: FeedPage } = await import('@/pages/FeedPage');
 
     render(
-      <MemoryRouter initialEntries={['/announcements']}>
+      <MemoryRouter
+        initialEntries={['/announcements']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <BookmarksProvider>
           <AnnouncementsProvider>
             <FeedPage />

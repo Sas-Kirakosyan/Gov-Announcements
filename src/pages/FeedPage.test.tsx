@@ -24,7 +24,10 @@ const posts: Post[] = [
 
 function renderFeed(initialEntry = '/announcements') {
   return render(
-    <MemoryRouter initialEntries={[initialEntry]}>
+    <MemoryRouter
+      initialEntries={[initialEntry]}
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <BookmarksProvider>
         <AnnouncementsProvider>
           <FeedPage />

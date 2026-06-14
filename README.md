@@ -34,6 +34,16 @@ npm run test:watch # run tests in watch mode
 
 ---
 
+## Deployment
+
+The app is a static SPA — `npm run build` emits everything to `dist/`, which can
+be served by any static host. `vercel.json` adds a catch-all rewrite to
+`index.html` so client-side routes (e.g. a deep link to `/announcements/42`)
+resolve correctly instead of 404-ing on refresh. On other hosts, configure the
+equivalent SPA fallback.
+
+---
+
 ## Features
 
 - **Feed (`/announcements`)** — loads all announcements once, with explicit
