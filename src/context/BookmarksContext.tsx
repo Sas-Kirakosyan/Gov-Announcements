@@ -55,10 +55,7 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Newest first: rely on insertion order of the stored object's keys.
-  const bookmarks = useMemo(
-    () => Object.values(map).reverse(),
-    [map],
-  );
+  const bookmarks = useMemo(() => Object.values(map).reverse(), [map]);
 
   const value = useMemo<BookmarksContextValue>(
     () => ({

@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useState,
   type ReactNode,
 } from 'react';
 import type { Announcement } from '@/types';
@@ -15,6 +16,8 @@ interface AnnouncementsContextValue {
   error: string | null;
   /** Re-run the initial fetch (used by the error-state Retry button). */
   retry: () => void;
+  /** Start the lazy list fetch. Called by the Feed; never by the Detail page. */
+  ensureLoaded: () => void;
   /** Look up a cached announcement by id, or `undefined` if not loaded. */
   getById: (id: number) => Announcement | undefined;
 }
@@ -28,12 +31,23 @@ const EMPTY_ANNOUNCEMENTS: Announcement[] = [];
 
 /**
  * Fetches the full announcement list once and shares it across the app. The
- * Feed, Detail, and Bookmarks pages all read from this single in-memory cache
- * so navigating between them never triggers a second list request.
+ * fetch is lazy: it only runs after a page calls `ensureLoaded` (the Feed), so
+ * landing directly on the Detail page leaves the cache empty and lets that page
+ * fetch a single post by id. Once loaded, the Feed, Detail, and Bookmarks pages
+ * all read from this single in-memory cache, so navigating between them never
+ * triggers a second list request.
  */
+
 export function AnnouncementsProvider({ children }: { children: ReactNode }) {
-  const { data, status, error, reload } = useFetch(fetchAnnouncements, []);
+  const [enabled, setEnabled] = useState(false);
+  const { data, status, error, reload } = useFetch(
+    fetchAnnouncements,
+    [],
+    enabled,
+  );
   const announcements = data ?? EMPTY_ANNOUNCEMENTS;
+
+  const ensureLoaded = useCallback(() => setEnabled(true), []);
 
   // Index by id for O(1) detail lookups, recomputed only when data changes.
   const byId = useMemo(() => {
@@ -50,9 +64,10 @@ export function AnnouncementsProvider({ children }: { children: ReactNode }) {
       announcements,
       error: error?.message ?? null,
       retry: reload,
+      ensureLoaded,
       getById,
     }),
-    [status, announcements, error, reload, getById],
+    [status, announcements, error, reload, ensureLoaded, getById],
   );
 
   return (

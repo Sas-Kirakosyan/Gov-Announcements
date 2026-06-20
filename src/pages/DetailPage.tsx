@@ -26,7 +26,6 @@ export default function DetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { getById } = useAnnouncements();
-
   const cached = validId ? getById(numericId) : undefined;
 
   // Only fetch when the announcement isn't already cached and the id is valid.
@@ -79,7 +78,9 @@ export default function DetailPage() {
 
       {isNotFound && (
         <EmptyState title={`Announcement #${id} could not be found.`}>
-          <Button onClick={() => navigate('/announcements')}>Back to feed</Button>
+          <Button onClick={() => navigate('/announcements')}>
+            Back to feed
+          </Button>
         </EmptyState>
       )}
 

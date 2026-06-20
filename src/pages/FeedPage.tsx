@@ -39,8 +39,19 @@ function parseCategory(raw: string | null): CategoryFilterValue {
  * detail page and back, and are shareable/bookmarkable links.
  */
 export default function FeedPage() {
-  const { status, announcements, error, retry } = useAnnouncements();
+  const { status, announcements, error, retry, ensureLoaded } =
+    useAnnouncements();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // The list is fetched lazily so deep-linking to a detail page doesn't pull
+  // the whole feed. The Feed is the page that needs it, so kick it off here.
+  useEffect(() => {
+    ensureLoaded();
+  }, [ensureLoaded]);
+
+  // Before the lazy fetch has started, status is 'idle'; show the loading UI
+  // for it too so there's no flash of an empty feed.
+  const isLoading = status === 'loading' || status === 'idle';
 
   const query = searchParams.get('q') ?? '';
   const category = parseCategory(searchParams.get('category'));
@@ -155,7 +166,7 @@ export default function FeedPage() {
         <CategoryFilter value={category} onChange={handleCategory} />
       </div>
 
-      {status === 'loading' && <Loading label="Loading announcements…" />}
+      {isLoading && <Loading label="Loading announcements…" />}
 
       {status === 'error' && (
         <ErrorState

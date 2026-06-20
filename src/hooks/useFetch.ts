@@ -36,7 +36,6 @@ export function useFetch<T>(
   );
   const [error, setError] = useState<Error | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
-
   // Hold the latest fetcher in a ref so callers can pass an inline arrow
   // function without it becoming an effect dependency (which would refetch on
   // every render). Refetching is driven by `deps`, `enabled`, and `reloadKey`.
