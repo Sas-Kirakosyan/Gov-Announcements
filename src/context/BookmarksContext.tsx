@@ -27,8 +27,16 @@ const BookmarksContext = createContext<BookmarksContextValue | null>(null);
  * We persist the full announcement object (not just its id) so the Bookmarks
  * page renders standalone — even on a cold refresh before the feed has loaded,
  * or after the source post would otherwise need re-fetching.
+ *
+ * `bookmarkedAt` records when each was saved so we can order the list by recency.
+ * We can't rely on object key order: ids are integers, and JS iterates
+ * integer-like keys in ascending numeric order regardless of insertion order.
  */
-type StoredBookmarks = Record<number, Announcement>;
+interface StoredBookmark {
+  announcement: Announcement;
+  bookmarkedAt: number;
+}
+type StoredBookmarks = Record<number, StoredBookmark>;
 
 export function BookmarksProvider({ children }: { children: ReactNode }) {
   const [map, setMap] = useState<StoredBookmarks>(() =>
@@ -48,14 +56,20 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
       if (announcement.id in next) {
         delete next[announcement.id];
       } else {
-        next[announcement.id] = announcement;
+        next[announcement.id] = { announcement, bookmarkedAt: Date.now() };
       }
       return next;
     });
   }, []);
 
-  // Newest first: rely on insertion order of the stored object's keys.
-  const bookmarks = useMemo(() => Object.values(map).reverse(), [map]);
+  // Most-recently bookmarked first, by recorded timestamp.
+  const bookmarks = useMemo(
+    () =>
+      Object.values(map)
+        .sort((a, b) => b.bookmarkedAt - a.bookmarkedAt)
+        .map((entry) => entry.announcement),
+    [map],
+  );
 
   const value = useMemo<BookmarksContextValue>(
     () => ({
